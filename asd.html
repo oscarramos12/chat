@@ -1,128 +1,143 @@
 <!DOCTYPE html>
 <html lang="es">
-    <head>
-    </head>
-    <body>
-      <script type="application/javascript">
-          let pos = "" 
-          const submit = (e) =>{
-              const current = new Date();
-              fetch("http://ubeje.xyz:3000/messages", {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({sender: 'Oscar R',message: document.getElementById("inp").value, date: current.toLocaleString()})
-          })
-          .then(res => res.json())
-          .then(()=> mensajes())
-      }
+<head>
+</head>
+<body>
+    <script type="application/javascript">
+        let pos = "" 
+        const submit = (e) =>{
+            const current = new Date();
+            fetch("http://ubeje.xyz:3000/messages", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({sender: 'Oscar R',message: document.getElementById("inp").value, date: current.toLocaleString()})
+        })
+        .then(res => res.json())
+        .then(()=> mensajes())
+    }
 
-            const parteArriba = document.createElement('div')
-            parteArriba.style.width =  "100%"
-            parteArriba.style.height =  "70%"
-            parteArriba.style.display = "flex"
-            parteArriba.style.order = "1"
-            parteArriba.style.overflowY = "scroll"
+        document.body.style.cssText = "margin: 0;"
+        const topL = document.createElement('div')      
+        topL.style.cssText = "min-height: 8vh; background: blue; color: white; font-size: 50px; align-items: center; display: flex; justify-content: left; position: fixed; width: 100%;"
+        topL.append('Mensajes')
+        document.body.append(topL)
 
-          document.body.style.cssText = "margin: 0;"
-          const topL = document.createElement('div')      
-          topL.style.cssText = "min-height: 8vh; background: blue; color: white; font-size: 50px; align-items: center; display: flex; justify-content: left; position: fixed; width: 100%;"
-          topL.append('Mensajes')
-          document.body.append(topL)
+        const down = document.createElement('div')
+        down.style.cssText = "align-items: center; display: flex; justify-content: center; position: fixed; width: 100%; top: 90%;"
+        const input = document.createElement('input')
+        input.maxLength = 140
+        input.style.cssText = "border-radius: 100px; width: 30%;outline: none; padding: 20px; height: 15px;"
+        input.id = "inp"
+        input.onkeypress = enter
 
-          const down = document.createElement('div')
-          down.style.cssText = "align-items: center; display: flex; justify-content: center; position: fixed; width: 100%; top: 90%;"
-          const input = document.createElement('input')
-          input.maxLength = 140
-          input.style.cssText = "border-radius: 100px; width: 30%;outline: none; padding: 20px; height: 15px;"
-          input.id = "inp"
+        const todo = document.createElement('div')
+        todo.id = "mensajes"
+        todo.style.cssText = "display: flex; flex-direction: column; background: orange; align-items: center; min-height: 200vh; background: white; width: 100%; overflow-y: scroll;"
+        document.body.append(todo)         
 
-          const todo = document.createElement('div')
-          todo.id = "mensajes"
-          todo.style.cssText = "display: flex; flex-direction: column; background: orange; align-items: center; min-height: 200vh; background: white; width: 100%; overflow-y: scroll;"
-          document.body.append(todo)         
-
-          down.append(input)
-          const send = document.createElement('button')
-          send.style.cssText = "margin: 10px;background-color: blue; border: none;color: white; padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px; outline: none; border-radius: 10px;"
-          send.append('Enviar')
-          send.addEventListener('click', submit)
-          down.append(send)
-          document.body.append(down)
-
-          const mensajes = () =>{
-
-            let temporal = parteArriba.scrollTop
-
-              fetch("http://ubeje.xyz:3000/messages", {
-              method: 'GET',
-              headers: {
-                  'Content-Type': 'application/json'
-              },
-              })
-
-              .then(res => res.json())
-              .then(res => {
-                  res.map(message => {
-
-                      const mensaje = document.createElement('div')
-                      mensaje.style.cssText = "display: flex; flex-direction: column-reverse; background: rgb(10, 75, 200); margin: 10px; padding: 0px; align-self: flex-end; border-radius: 10px; min-width: 800px; color: black; font-size: 20px;"
-
-                      const nombre = document.createElement('h5')
-                      const texto = document.createElement('h1')
-                      const fecha = document.createElement('h5')
-                      const image = document.createElement('img')
-
-                      try{
-                          if(message.sender !== "Oscar R"){
-
-                              mensaje.style.cssText = "display: flex; flex-direction: column-reverse; background: rgb(10, 200, 75); margin: 10px; padding: 0px; align-self: flex-start; border-radius: 10px; min-width: 800px; color: black; font-size: 20px;"
-
-                          }
-                          
-                          if(message.message.match(/\.(jpeg|jpg|gif|bmp|tiff|png|svg)$/gi)){
-
-                              image.src = message.message
-                              texto.append(image)
-
-                          }
-                          else {
-
-                            texto.append(message.message)
-
-                          }
-                          
-                          nombre.append(message.sender)
-                          fecha.append(message.date)
-
-                          mensaje.appendChild(fecha)
-                          mensaje.append("--------------------------------------------------------------------------")
-                          mensaje.appendChild(texto)
-                          mensaje.append("--------------------------------------------------------------------------")
-                          mensaje.appendChild(nombre)
-                          todo.append(mensaje)
-                          parteArriba.scrollTop = temporal
-
-                          }
-                          catch(err) {
-                              const a = err
-                          }
-                          
-  
-                  })
-              })
-              .then(res => {document.body.scrollTo(0, pos)})
-          }
+        down.append(input)
+        const send = document.createElement('button')
+        send.style.cssText = "margin: 10px;background-color: blue; border: none;color: white; padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px; outline: none; border-radius: 10px;"
+        send.append('Enviar')
+        send.addEventListener('click', submit)
+        down.append(send)
+        document.body.append(down)
           
-          mensajes()
-          let intervalId = window.setInterval(function(){
 
-              todo.innerHTML = ""
-              mensajes()
 
-          }, 8000);
-  
-      </script>
-    </body>
-  </html>
+        function enter(e) {
+            var code = e.keyCode ? e.keyCode : e.which;
+            if (code == 13) {
+
+                e.preventDefault();
+
+            if (input.value != "") {
+
+                submit(input.value);
+
+            setTimeout(() => {
+
+                mensajes();
+
+            }, 300);
+
+            input.value = "";
+      }
+    }
+  }
+
+        const mensajes = () =>{
+
+
+            fetch("http://ubeje.xyz:3000/messages", {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            })
+
+            .then(res => res.json())
+            .then(res => {
+                res.map(message => {
+
+                    const mensaje = document.createElement('div')
+                    mensaje.style.cssText = "display: flex; flex-direction: column-reverse; background: rgb(10, 200, 75); margin: 10px; padding: 0px; align-self: flex-start; border-radius: 10px; min-width: 800px; color: black; font-size: 20px;"
+
+                    const nombre = document.createElement('h5')
+                    const texto = document.createElement('h1')
+                    const fecha = document.createElement('h5')
+                    const image = document.createElement('img')
+
+                    try{
+                        if(message.sender == "Oscar R"){
+
+                        mensaje.style.cssText = "display: flex; flex-direction: column-reverse; background: rgb(10, 75, 200); margin: 10px; padding: 0px; align-self: flex-end; border-radius: 10px; min-width: 800px; color: black; font-size: 20px;"
+
+                        }
+                        
+                        if(message.message.match(/\.(jpeg|jpg|gif|bmp|tiff|png|svg)$/gi)){
+
+                            image.src = message.message
+                            texto.append(image)
+
+                        }
+                        else {
+
+                        texto.append(message.message)
+
+                        }
+                        
+                        nombre.append(message.sender)
+                        fecha.append(message.date)
+
+                        mensaje.appendChild(fecha)
+                        mensaje.append("--------------------------------------------------------------------------")
+                        mensaje.appendChild(texto)
+                        mensaje.append("--------------------------------------------------------------------------")
+                        mensaje.appendChild(nombre)
+                        todo.append(mensaje)
+
+                        }
+                        catch(err) {
+                            const a = err
+                        }
+                        
+
+                })
+            })
+            .then(res => {document.body.scrollTo(0, pos)})
+        }
+        
+        mensajes()
+        let intervalId = window.setInterval(function(){
+
+            todo.innerHTML = ""
+            mensajes()
+
+        }, 8000);
+
+    </script>
+</body>
+</html>
